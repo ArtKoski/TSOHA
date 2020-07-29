@@ -1,0 +1,21 @@
+{% extends "layoutNotLogged.html" %}
+{% block content %}
+        <form method="POST" action="/register">
+            <p>
+                <label for="username" class="sr-only">Username</label>
+                <input type="text" th:field="*{username}" id="username" name="username" class="form-control"
+                       placeholder="Username" required autofocus/>
+                </p>
+
+            <p>
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" id="password" name="password" th:field="*{password}" class="form-control"
+                       placeholder="Password" required autofocus/>
+            </p>
+            
+            <input class="btn btn-lg btn-secondary btn-block" type="submit" value="Create new account!"/>
+        </form>
+
+
+        <p><a action="/">Go back</a></p>
+{% endblock %}
