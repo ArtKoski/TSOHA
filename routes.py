@@ -1,6 +1,6 @@
 from app import app
 from flask import render_template, request, redirect, session
-import usersLogic
+import usersLogic, exercisesLogic
 
 @app.route("/")
 def index():
@@ -46,3 +46,16 @@ def logout():
     usersLogic.logout()
     return redirect("/")
 
+
+#NÄÄ VARMAAN ERILLEEN SELVYYDEN VUOKSI
+@app.route("/addExercise", methods=["post"])
+def addExercise():
+    exercise = request.form["userAddedExercise"]
+    exercisesLogic.addExercise(exercise)
+    return redirect("track")
+    
+    
+@app.route("/track", methods=["get"])
+def track():
+    list = exercisesLogic.get_list()
+    return render_template("workout.html", exercises=list)

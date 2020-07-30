@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block content %}
+
+        <div th:fragment="head">
+            <div class="jumbotron text-center" style="margin-bottom:0">
+                <h1>Workout</h1> 
+            </div>
+        </div>
+        
+        <div>
+            <div class="container" style="margin-top:30px">
+                <div class="mt-sm-3 mb-sm-3 row">
+                    <col>
+                    <p>Choose the exercises to track:</p>
+                    
+                    <ul class="list-group">
+                    {% for ejercicio in exercises %}
+                    <form action="/" method="post">
+                        <li class="list-group-item"> {{ ejercicio[0] }}
+                        <input class="btn btn-primary" type="submit" value="+">
+                        </li>
+                    </form>  
+                    {% endfor %}
+                    </ul>                  
+                    
+                    
+                    
+                    
+                    <p>Cant find the exercise you're looking for? </p> 
+                     <p>
+                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                Submit your own exercise
+                            </button>
+                        </p>
+                        <div class="collapse" id="collapseExample">
+                            <div class="card card-body">
+                                <form action="/addExercise" method="post">
+                                    <div class="form-group">
+                                        <label for="userAddedExercise">Exercise name</label>
+                                        <input type="text" class="form-control" name="userAddedExercise" id="userAddedExercise" placeholder="Name of the exercise">
+                                    </div>
+                                    <input class="btn btn-primary" type="submit" value="Submit exercise">
+                                </form>
+                            </div>
+                        </div>
+                        </col>
+                        <col>
+                        <span>asd</span>
+                        </col>   
+            </div>
+        </div>
+        <div class="jumbotron text-center" style="margin-bottom:0">
+            <p>Footer</p>
+        </div>
+    </div>
+    
+{% endblock %}
+
+
