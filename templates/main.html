@@ -1,24 +1,87 @@
 {% extends "layout.html" %}
+
+
+
 {% block content %}
 
-        <div th:fragment="head">
-            <div class="jumbotron text-center" style="margin-bottom:0">
-                <h1>asdasdasd</h1>
-                <p>Temp</p> 
-            </div>
-        </div>
-        
-        <div>
-            <div class="container" style="margin-top:30px">
-                <div class="mt-sm-3 mb-sm-3 row">
-                   <p>Welcome, </p>  {{ name }}                 
-                </row>
-            </div>
-        </div>
-        <div class="jumbotron text-center" style="margin-bottom:0">
-            <p>Footer</p>
-        </div>
+<div>
+    <div class="jumbotron text-center" style="margin-bottom:0">
+        <h1>Progress Tracker                 
+        </h1>
+        <p>Logged in as <strong> {{ name }} </strong></p> 
     </div>
-    {% endblock %}
+</div>
+
+
+<div class="container">
+    {% for exerciseVariables in trackedExercises %}
+
+    <div class="col-xs-4">
+        <h3>{{ exerciseVariables[0][0] }} </h3> 
+        <p>
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#{{exerciseVariables[0][0]}}" aria-expanded="false" aria-controls="{{exerciseVariables[0][0]}}">
+                New workout
+            </button>
+        </p>
+        <div class="collapse" id="{{exerciseVariables[0][0]}}">
+            <div class="card card-body">
+                <form action="/saveWorkout" method="post">
+
+
+                    <small class="form-text text-muted">Work set</small>
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="data">Sets / Reps / Weight</span>
+                        </div>
+                        <input type="text" class="form-control" name="Sets" id="Sets" placeholder="Sets" aria-label="Small" aria-describedby="data">
+                        <input type="text" class="form-control" name="Reps" id="Reps" placeholder="Reps" aria-label="Small" aria-describedby="data">
+                        <input type="text" class="form-control" name="Weight" id="Weight" placeholder="Weight" aria-label="Small" aria-describedby="data">
+                    </div>
+
+                    <small class="form-text text-muted">Additional information</small>
+                    <div class="input-group-prepend">
+                        <input type="text" class="form-control" name="Info" id="Info" placeholder="">
+                    </div>
+
+                    <div class="form-group">
+                    </div>
+                    <input type="hidden" value={{ exerciseVariables[0][0] }} name="Exercise">
+                    <input class="btn btn-primary" type="submit" value="Save workout">
+                </form>
+            </div>
+        </div>
+
+
+        </span>
+        {% if exerciseVariables[0][2] %}
+        <div class="card">
+            {% for exercise in exerciseVariables %}  
+
+            <div class="card-body">     
+                {{ exercise[1] }}
+                x {{ exercise[2] }}
+                ,  {{ exercise[3] }} kilos  
+                @{{ exercise[4] }}  
+                : {{ exercise[5] }}
+            </div>
+            {% endfor %}
+
+
+        </div>
+        {% endif %}
+
+        {% if not exerciseVariables[0][2] %}
+        {{ exerciseVariables[0][1] }}
+        {% endif %}
+
+        {% endfor %}
+    </div>
+</div>
+
+<div class="jumbotron text-center" style="margin-bottom:0">
+    <p>Footer</p>
+</div>
+{% endblock %}
+
 
 

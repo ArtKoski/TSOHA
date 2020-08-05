@@ -41,3 +41,9 @@ def logout():
 
 def user_id():
     return session.get("user_id",0)
+
+def user_id_db():
+    username = session.get("username")
+    sql = "SELECT id FROM users WHERE username=:username"
+    result = db.session.execute(sql, {"username":username})
+    return result.fetchone()[0]

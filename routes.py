@@ -6,7 +6,8 @@ import usersLogic, exercisesLogic
 def index():
     if 'username' in session:
         username = session['username']
-        return render_template("main.html", name=username)
+        trackedExercises = exercisesLogic.get_exerciseVariablesList()
+        return render_template("main.html", name=username, trackedExercises=trackedExercises)
     else:
         return render_template("mainNotLogged.html")
 
@@ -52,10 +53,62 @@ def logout():
 def addExercise():
     exercise = request.form["userAddedExercise"]
     exercisesLogic.addExercise(exercise)
-    return redirect("track")
+    return redirect("/track")
     
     
 @app.route("/track", methods=["get"])
 def track():
-    list = exercisesLogic.get_list()
-    return render_template("workout.html", exercises=list)
+    listExercises = exercisesLogic.get_list()
+    listTrackedExercises = exercisesLogic.get_trackedList()
+    return render_template("workout.html", exercises=listExercises, trackedExercises=listTrackedExercises)
+
+@app.route("/trackExercise", methods=["post"])
+def trackExercise():
+    exercise = request.form["exercise"]
+    if exercisesLogic.trackExercise(exercise):
+        return redirect("/track")
+    else:
+        return redirect("/track")   ##JAVASCRIPT?? JOKU POP-UP
+    
+@app.route("/untrackExercise", methods=["post"])
+def untrack():
+    exercise = request.form["exercise"]
+    if exercisesLogic.untrackExercise(exercise):
+        return redirect("/track")
+    else:
+        print("ei onnistunut")
+        return redirect("/track")    
+    
+@app.route("/saveWorkout", methods=["post"])
+def saveWorkout():
+    Exercise = request.form["Exercise"]
+    Sets = request.form["Sets"]
+    Reps = request.form["Reps"]
+    Weight = request.form["Weight"]
+    Info = request.form["Info"]
+    
+    exercisesLogic.saveWorkout(Exercise, Sets, Reps, Weight, Info)
+    return redirect("/")
+
+@app.route("/searchBank", methods=["get"])
+def searchExerciseBank():
+    searchTerm = request.args["search"]
+    listExercises = exercisesLogic.searchBank(searchTerm)
+    listTrackedExercises = exercisesLogic.get_trackedList()
+    return render_template("workout.html", exercises=listExercises, trackedExercises=listTrackedExercises)
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
