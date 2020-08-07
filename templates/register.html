@@ -1,5 +1,15 @@
 {% extends "layoutNotLogged.html" %}
 {% block content %}
+
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert"> {{ message }} </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
         <form method="POST" action="/register">
             <p>
                 <label for="username" class="sr-only">Username</label>
@@ -17,5 +27,5 @@
         </form>
 
 
-        <p><a action="/">Go back</a></p>
+        <a href="/">Go back</a>
 {% endblock %}

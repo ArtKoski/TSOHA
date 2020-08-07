@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, redirect, session
+from flask import render_template, request, redirect, session, flash
 import usersLogic, exercisesLogic
 
 @app.route("/")
@@ -25,8 +25,8 @@ def login():
             return redirect("/")
 
     else:
-        #javascriptiä tai jtn tähän
-        return render_template("error.html",message="Väärä tunnus tai salasana")
+        flash("Wrong username or password")
+        return render_template("login.html")
 
 @app.route("/register", methods=["get","post"])
 def register():
@@ -38,8 +38,8 @@ def register():
         if usersLogic.register(username,password):
             return redirect("/")
         else:
-#ja tähän
-            return render_template("error.html",message="Rekisteröinti ei onnistunut")
+            flash("Register unsuccessful")
+            return render_template("register.html")
 
 
 @app.route("/logout")
@@ -87,7 +87,7 @@ def saveWorkout():
     Weight = request.form["Weight"]
     Info = request.form["Info"]
     
-    exercisesLogic.saveWorkout(Exercise, Sets, Reps, Weight, Info)
+    exercisesLogic.saveWorkout(Exercise, Sets, Reps, Weight, Info)  #MISSING: ERROR HANDLING
     return redirect("/")
 
 @app.route("/searchBank", methods=["get"])
