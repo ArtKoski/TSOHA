@@ -1,12 +1,12 @@
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
-    username TEXT UNIQUE,
-    password TEXT
+    username TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL
 );
 
 CREATE TABLE exercises(
     id SERIAL PRIMARY KEY,
-    exercise TEXT UNIQUE,
+    exercise TEXT UNIQUE NOT NULL,
     popularity INTEGER
 );
 
@@ -20,10 +20,10 @@ CREATE TABLE trackedExercises(
 CREATE TABLE exerciseVariables(
     id SERIAL PRIMARY KEY,
     trackedExercise_id INTEGER REFERENCES trackedExercises NOT NULL,
-    setsTotal INTEGER,
-    reps INTEGER,
-    weight INTEGER,
+    setsTotal INTEGER NOT NULL,
+    reps INTEGER NOT NULL,
+    weight INTEGER NOT NULL,
     info TEXT,
-    time TIMESTAMP
+    time DATE DEFAULT CURRENT_DATE
 );
 

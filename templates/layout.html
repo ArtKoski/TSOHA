@@ -4,39 +4,20 @@
     <title>Flask Template Example</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://themesguide.github.io/top-hat/dist/minco/theme.css">
     <style type="text/css">
       .container {
-        max-width: 1100px;
+        max-width: 800px;
         padding-top: 100px;
-        background-color: #fff;
+        background-color: #F0FFFF;
       }
-      .alert {
-  padding: 12px;
-  border-radius: 3px;
-  font-size: 1.2rem;
-  margin-bottom: 16px;
-  border-width: 2px;
-  border-style: solid;
-}
-
-.alert-error {
-  border-color: darkred;
-  background-color: red;
-  color: white;
-}
-
-.alert-info {
-  border-color: orange;
-  background-color: yellow;
-  color: black;
-}
 
       h2 {color: blue;}
     </style>
   </head>
   <body>
-    <div>
-    <div>
+        {% if g.user %}
             <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
                 <a class="navbar-brand" href="/">ProgressTracker</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -45,35 +26,79 @@
                 <div class="collapse navbar-collapse" id="collapsibleNavbar">
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" href="/track">Track Exercises</a>
+                            <a class="nav-link" href="/track">Select Exercises</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/logout">Logout</a>
                         </li>
+                        <!--
                         <li>
                             <form class="form-inline my-2 my-lg-0" action="/search" method="post">
                                 <input class="form-control mr-sm-2" type="search" id='search' name='search' placeholder="Not functional" aria-label="Search">
                                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                             </form>
                         </li>
+                        -->
+                        
+                        <li class="nav-item">
+                            <a class="nav-link disabled">logged in as {{ session["username"] }}</a>
+                        </li>
+                    </ul>
+                </div>  
+                
+            </nav>
+        {% else %}
+         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                <a class="navbar-brand" href="/">ProgressTracker</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/register">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
                     </ul>
                 </div>  
             </nav>
-        </div>
         
-
-        </div>
+        {% endif %}
         
-    <div class="container">
+    <div class="container" style="padding-top: 20px; padding-bottom: 20px">
     
-      <br>
+    
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert"> {{ message }} </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+    
+    
+    <div class="jumbotron text-center" style="margin-bottom:0; background: none">
+       {% block header %}{% endblock %}
+   </div>
+     
+     
+       <br>
       {% block content %}{% endblock %}
-      <h2></h2>
-    
       <br>
-      </div>
+      
+<div class="jumbotron text-center" style="margin-bottom:0;  background: none">
+ {% block footer %}{% endblock %}
+</div>
+
+
+      </div>  
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    
   </body>
 </html>
 

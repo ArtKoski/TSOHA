@@ -1,27 +1,25 @@
-{% extends "layoutNotLogged.html" %}
+{% extends "layout.html" %}
+
+{% block header %}
+  <h1>{% block title %}Login{% endblock %}</h1>
+{% endblock %}
+
+
 {% block content %}
 
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger" role="alert"> {{ message }} </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
 
 <form class="form-signin" action="/login" method="post">
-    <h2 class="form-signin-heading">Please sign in</h2>
     <p>
         <label for="username" class="sr-only">Username</label>
         <input type="text" id="username" name="username" class="form-control"
-               placeholder="Username" required autofocus/>
+               placeholder="Username" required/>
     </p>
     <p>
         <label for="password" class="sr-only">Password</label>
         <input type="password" id="password" name="password" class="form-control"
-               placeholder="Password" required autofocus/>
+               placeholder="Password" required/>
     </p>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button><br/>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     <a href="/">Back to home page</a>
 </form>
 {% endblock %}

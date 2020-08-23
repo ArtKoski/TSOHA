@@ -1,20 +1,50 @@
 {% extends "layout.html" %}
 
-
+{% block header %}
+  <h1>{% block title %}Progress Tracker{% endblock %}</h1>
+  
+        {% if g.user %}
+        <small class="form-text text-muted">Keep track of the sets, reps and weight used in your workouts. You can save your workout numbers below.</small>
+        
+        {% else %}
+        <small class="form-text text-muted">Keep track of your workouts</small>
+    
+        {% endif %}
+        
+{% endblock %}
 
 {% block content %}
 
-<div>
-    <div class="jumbotron text-center" style="margin-bottom:0">
-        <h1>Progress Tracker                 
-        </h1>
-        <p>Logged in as <strong> {{ name }} </strong></p> 
-    </div>
-</div>
+{% if g.user %}   
 
-
-<div class="container">
     {% for exerciseVariables in trackedExercises %}
+    
+    <!--
+        <script>
+    
+            var ctxL = document.getElementById("lineChart").getContext('2d');
+            var myLineChart = new Chart(ctxL, {
+            type: 'line',
+            data: {
+            labels: ["January", "February", "March", "April", "May", "June", "July"],
+            datasets: [{
+            label: {{ exerciseVariables[0][0] }},
+            data: [65, 59, 80, 81, 56, 55, 40],
+            backgroundColor: [
+            'rgba(105, 0, 132, .2)',
+            ],
+            borderColor: [
+            'rgba(200, 99, 132, .7)',
+            ],
+            borderWidth: 2
+            },
+            options: {
+            responsive: true
+            }
+            });
+    
+        </script>
+    -->
 
     <div class="col-xs-4">
         <h3>{{ exerciseVariables[0][0] }} </h3> 
@@ -31,14 +61,14 @@
                     <small class="form-text text-muted">Work set</small>
                     <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="data">Sets / Reps / Weight</span>
+                            <span class="input-group-text" id="data">Sets / Reps / Kg</span>
                         </div>
-                        <input type="text" class="form-control" name="Sets" id="Sets" placeholder="Sets" aria-label="Small" aria-describedby="data">
-                        <input type="text" class="form-control" name="Reps" id="Reps" placeholder="Reps" aria-label="Small" aria-describedby="data">
-                        <input type="text" class="form-control" name="Weight" id="Weight" placeholder="Weight" aria-label="Small" aria-describedby="data">
+                        <input type="text" class="form-control" name="Sets" id="Sets" placeholder="Sets" aria-label="Small" aria-describedby="data" required="true">
+                        <input type="text" class="form-control" name="Reps" id="Reps" placeholder="Reps" aria-label="Small" aria-describedby="data" required="true">
+                        <input type="text" class="form-control" name="Weight" id="Weight" placeholder="Kg" aria-label="Small" aria-describedby="data" required="true">
                     </div>
 
-                    <small class="form-text text-muted">Additional information</small>
+                    <small class="form-text text-muted">Additional information (max 40 characters)</small>
                     <div class="input-group-prepend">
                         <input type="text" class="form-control" name="Info" id="Info" placeholder="">
                     </div>
@@ -52,36 +82,140 @@
         </div>
 
 
-        </span>
-        {% if exerciseVariables[0][3] %}
-        <div class="card">
-            {% for exercise in exerciseVariables %}  
+        {% if exerciseVariables[0][6] %}
 
-            <div class="card-body">     
-                {{ exercise[1] }}
-                x {{ exercise[2] }}
-                ,  {{ exercise[3] }} kilos  
-                @{{ exercise[4] }}  
-                : {{ exercise[5] }}
-            </div>
-            {% endfor %}
-
-
+<div class="card">
+        <div class="card-body">
+        {% for exercise in exerciseVariables %}  
+         
+    <li class="d-flex flex-row">    
+        <div class="mr-auto p-2 text-truncate" style="max-width: 500px;">
+            <span class="font-weight-bold">
+                {{ exercise[1] }} 
+            </span>
+            x 
+            <span class="font-weight-bold">
+             {{ exercise[2] }}
+            </span>
+            
+            
+            
+            <span class="font-weight-light">
+                 {% if exercise[3] %}
+            |
+                {{ exercise[3] }} kg
+            
+                 {% endif %}
+            </span>      
+            
+            <span class="font-weight-light">
+            
+                    {% if exercise[5] %}
+            
+                     : {{ exercise[5] }}
+                    {% endif %}
+            </span>
+            
         </div>
-        {% endif %}
 
-        {% if not exerciseVariables[0][3] %}
-        {{ exerciseVariables[0][1] }}
-        {% endif %}
+        <div class="p-2">
+            <small class="form-text text-muted">
+                @{{ exercise[4] }} 
+            </small>
+        </div>
+        <div class="p-2">
+        
 
+            <button class="btn btn-success btn-sm rounded-0" type="button" data-toggle="collapse" data-target="#{{exercise[6]}}" title="Edit"><i class="fa fa-edit"></i></button>
+
+            <div class="btn-group dropright">
+                <button class="btn btn-danger dropdown-toggle btn-sm rounded-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="Delete"><i class="fa fa-trash"></i></button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+
+                    <form action="/deleteWorkout" method="post">
+                        <input type="hidden" value={{ exercise[6] }} name="exerciseVariableId">
+                        <button class="dropdown-item" type="submit">Delete</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        
+
+         
+    </li>
+    
+    <div class="collapse" id="{{ exercise[6] }}">
+            <div class="card card-body">
+                <form action="/editWorkout" method="post">
+
+                    <small class="form-text">Edit workout</small>
+                    <small class="form-text text-muted">Work set</small>
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="data">Sets / Reps / Kg</span>
+                        </div>
+                        <input type="text" class="form-control" name="Sets" id="Sets" placeholder="{{exercise[1]}}" aria-label="Small" aria-describedby="data" required="true">
+                        <input type="text" class="form-control" name="Reps" id="Reps" placeholder="{{exercise[2]}}" aria-label="Small" aria-describedby="data" required="true">
+                        <input type="text" class="form-control" name="Weight" id="Weight" placeholder="{{exercise[3]}}" aria-label="Small" aria-describedby="data" required="true">
+                    </div>
+
+                    <small class="form-text text-muted">Additional information (max 40 characters)</small>
+                    <div class="input-group-prepend">
+                        <input type="text" class="form-control" name="Info" id="Info" placeholder="{{exercise[5]}}">
+                    </div>
+
+                    <input type="hidden" value={{ exercise[6] }} name="exerciseVariableId">
+                    <input class="btn btn-primary" type="submit" value="Update workout">
+                </form>
+            </div>
+        </div>
+    
+              
         {% endfor %}
-    </div>
-</div>
+        </div>
+   
+        </div>
 
-<div class="jumbotron text-center" style="margin-bottom:0">
-    <p></p>
-</div>
+        
+    </div>
+    
+    
+    {% else %}
+    {{ exerciseVariables[0][1] }}
+    
+    {% endif %}
+
+    {% endfor %}
+
+
+      {% else %}
+      <div class="d-flex justify-content-center">
+        <a href="/login">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
+        </a>
+        
+        <a href="/register">  
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Register</button>
+        </a>                    
+      </div>
+
+      {% endif %}
+
+
+<!--
+<canvas id="lineChart">
+</canvas>
+-->
+
+
 {% endblock %}
 
+
+{% block footer %}
+  <h1></h1>
+{% endblock %}
 
 

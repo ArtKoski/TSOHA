@@ -1,17 +1,17 @@
 from db import db
 from flask import redirect, render_template, session
-import usersLogic
 from datetime import date
 
-def addExercise(exercise):
+def add_exercise(exercise):
     try:
         sql = "INSERT INTO exercises (exercise, popularity) VALUES (:exercise,0)"
         db.session.execute(sql, {"exercise":exercise})
         db.session.commit()
         
     except:
-        sql = "ROLLBACK;"
-        db.session.execute(sql)
+        #TEST THIS
+        #sql = "ROLLBACK;"
+        #db.session.execute(sql)
         updateExercise(exercise)
         
 def updateExercise(exercise):
@@ -50,8 +50,7 @@ def get_trackedExercise_idByUserAndExercise(userId, exerciseId):
 
 
 def trackExercise(exercise):
-    
-    userId = usersLogic.user_id_db()
+    userId = session["userId"]
     exerciseId = get_exercise_id(exercise)
         
     if checkForDuplicate(exercise, userId, exerciseId):
@@ -80,7 +79,7 @@ def checkForDuplicate(exercise, userId, exerciseId):
     
 def untrackExercise(exercise):
     try:
-        userId = usersLogic.user_id_db()
+        userId = session["userId"]
         exerciseId = get_exercise_id(exercise)
         
         sql  = "UPDATE trackedExercises SET visible = 0 WHERE user_id=:userId AND exercise_id=:exerciseId"
@@ -93,7 +92,7 @@ def untrackExercise(exercise):
     
     
 def get_trackedList():
-    userId = usersLogic.user_id_db()
+    userId = session["userId"]
     sql = "SELECT exercise FROM exercises, trackedExercises WHERE exercises.id=trackedExercises.exercise_id AND trackedExercises.user_id=:userId AND trackedExercises.visible=1"
     result = db.session.execute(sql, {"userId":userId})
     polls = result.fetchall()
@@ -101,68 +100,71 @@ def get_trackedList():
 
 
 def get_exerciseVariablesListForTEST(exercise, userId):
-    if checkForDuplicateTEST(userId, exercise):
-        sql = "SELECT ex.exercise, e.setsTotal, e.reps, e.weight, e.time, e.info, e.trackedExercise_id FROM exerciseVariables e, trackedExercises tE, exercises ex WHERE ex.id=:exerciseId AND tE.id=e.trackedExercise_id AND tE.user_id=:userId AND tE.visible=1 AND e.trackedExercise_id=:trackedExerciseId ORDER BY e.time DESC"
+        sql = "SELECT ex.exercise, e.setsTotal, e.reps, e.weight, e.time, e.info, e.id FROM exerciseVariables e, trackedExercises tE, exercises ex WHERE ex.id=:exerciseId AND tE.id=e.trackedExercise_id AND tE.user_id=:userId AND tE.visible=1 AND e.trackedExercise_id=:trackedExerciseId ORDER BY e.id DESC"
         result = db.session.execute(sql, {"userId":userId, "exerciseId":get_exercise_id(exercise), "trackedExerciseId":get_trackedExercise_id(exercise, userId)})
         polls = result.fetchall()
-        return polls
-    else:
-        lista=[]
-        polls = (exercise, "No saved workouts!")
-        lista.append(polls)
-        return lista
-
-
-def checkForDuplicateTEST(userId, exercise):
-        exerciseId = get_exercise_id(exercise)
-        sql  = "SELECT EXISTS(SELECT e.id FROM exerciseVariables e, trackedExercises tE WHERE tE.id=e.trackedExercise_id AND tE.user_id=:userId AND tE.visible=1 AND tE.exercise_id=:exerciseId)"
-        result = db.session.execute(sql, {"userId":userId, "exerciseId":exerciseId})
-        if result.fetchone()[0]:
-            return True
+        if len(polls) != 0:
+            return polls
         else:
-            return False
-
+            lista=[]
+            polls = (exercise, "No saved workouts!")
+            lista.append(polls)
+            return lista
 
 
 def get_exerciseVariablesList():
-    userId = usersLogic.user_id_db()
+    userId = session["userId"]
     lista = get_trackedList()
+    
+    if len(lista) == 0:
+        return None
     
     palautettava = []
     for alkio in lista:
         polls = get_exerciseVariablesListForTEST(alkio[0], userId)
-        """
-        if len(polls[0])>4:
-          formattedTime = str(polls[0][4].strftime('%Y-%m-%d'))
-          x = list(polls[0])
-          x.append(formattedTime)
-          y = tuple(x)
-          spagetti = []
-          spagetti.append(y)
-          palautettava.append(spagetti)  
-        else:
-        """
-        palautettava.append(polls)
-    
+        palautettava.append(polls)    
+        
     return palautettava
 
 
 def saveWorkout(Exercise, Sets, Reps, Weight, Info):
-    ExerciseId = get_trackedExercise_id(Exercise, usersLogic.user_id_db())
-    timenow = date.today()
+    ExerciseId = get_trackedExercise_id(Exercise, session["userId"])
     try:
-        sql  = "INSERT INTO exerciseVariables (trackedExercise_id, setsTotal, reps, weight, time, info) VALUES (:exerciseId,:sets,:reps,:weight,:time,:info)"
-        db.session.execute(sql, {"exerciseId":ExerciseId,"sets":Sets,"reps":Reps,"weight":Weight,"time":timenow,"info":Info})
+        sql  = "INSERT INTO exerciseVariables (trackedExercise_id, setsTotal, reps, weight, time, info) VALUES (:exerciseId,:sets,:reps,:weight,CURRENT_DATE,:info)"
+        db.session.execute(sql, {"exerciseId":ExerciseId,"sets":Sets,"reps":Reps,"weight":Weight,"info":Info})
         db.session.commit()
         return True
     except:
         return False
+    
+    
+
+def editWorkout(Id, Sets, Reps, Weight, Info):
+    try:
+        sql  = "UPDATE exerciseVariables SET setsTotal=:sets, reps=:reps, weight=:weight, info=:info WHERE id=:id"
+        db.session.execute(sql, {"id":Id,"sets":Sets,"reps":Reps,"weight":Weight,"info":Info})
+        db.session.commit()
+        return True
+    except:
+        return False
+    
+def deleteWorkout(Id):
+    try:
+        sql  =  "DELETE FROM exerciseVariables WHERE id=:id"
+        db.session.execute(sql, {"id":Id})
+        db.session.commit()
+        return True
+    except:
+        return False
+    
+
     
 def searchBank(query):
     sql = "SELECT exercise FROM exercises WHERE exercise LIKE :query"  # NO LIMIT ATM
     result = db.session.execute(sql, {"query":"%"+query+"%"})
     results = result.fetchall()
     return results;
+
     
     
 
