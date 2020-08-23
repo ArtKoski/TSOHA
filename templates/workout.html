@@ -1,100 +1,82 @@
+
+
 {% extends "layout.html" %}
-
-
 {% block header %}
-  <h1>{% block title %}Exercise selection{% endblock %}</h1>
-    <small class="form-text text-muted">Select the exercises you want to track from the exercise bank below.</small>
+<h1>{% block title %}Exercise selection{% endblock %}</h1>
+<small class="form-text text-muted">Select the exercises you want to track from the exercise bank below.</small>
 {% endblock %}
-
-
 {% block content %}
 <div class="row">
-    <div class="col">
-
-        <p class="font-weight-bold">Exercise bank</p>
-
-            <form action="/searchBank" method="GET">
-                <input class="form-control-sm" type="search" id='search' name='search' placeholder="" aria-label="Search">
-                <button class="btn btn-sm btn-outline-success my-2 my-sm-0" type="submit">Search for exercise</button>
-            </form>
-    </div>
-    <div class="col">
-        <p class="font-weight-bold">Tracked exercises</p>
-    </div>            
-    </div>
-    <div class="row">
-
-        <div class="col">
-            <small class="form-text text-muted">Choose the exercises to track: (press +)</small>
-
-            <ul class="list-group">
-                {% for ejercicio in exercises %}
-
-                <form action="/trackExercise" method="post">
-                    <li class="list-group-item">
-                        {{ ejercicio[0] }}
-                        <input type="hidden" value={{ ejercicio[0] }} name="exercise">
-                        <input class="btn btn-sm btn-primary" type="submit" value="+">
-                    </li>
-                </form>  
-
-                {% endfor %}
-
-            </ul>                  
-        </div>
-        <div class="col">
-            <small class="form-text text-muted">You are tracking these exercises:</small>
-
-
-            <ul class="list-group">
-                {% for ejercicio in trackedExercises %}
-                <form action="/untrackExercise" method="post">
-                    <li class="list-group-item"> {{ ejercicio[0] }}
-                        <input type="hidden" value={{ ejercicio[0] }} name="exercise">
-                        <input class="btn btn-primary" type="submit" value="-">
-                    </li>
-                </form>  
-                {% endfor %}
-            </ul>
-
-        </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <p>Cant find the exercise you're looking for? </p> 
-                <p>
-                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                        Submit your own exercise
-                    </button>
-                </p>
-                <div class="collapse" id="collapseExample">
-                    <div class="card card-body">
-                        <form action="/addExercise" method="post">
-                            <div class="form-group">
-                                <input type="text" class="form-control" name="userAddedExercise" id="userAddedExercise" placeholder="Name of the exercise">
-                            </div>
-                            <input class="btn btn-primary" type="submit" value="Submit exercise">
-                        </form>
-                        
-                        <small class="form-text text-muted">The exercise will be added to the exercise bank</small>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-{% endblock %}
-
-
-{% block footer %}
-
+	<div class="col">
+		<p class="font-weight-bold">Exercise bank</p>
+		<form action="/searchBank" method="GET">
+			<input class="form-control-sm" type="search" id='search' name='search' placeholder="" aria-label="Search">
+			<button class="btn btn-sm btn-outline-success my-2 my-sm-0" type="submit">Search for exercise</button>
+		</form>
+	</div>
+	<div class="col">
+		<p class="font-weight-bold">Tracked exercises</p>
+	</div>
+</div>
 <div class="row">
-    <div class="col">
-  
-                        <small class="form-text text-muted">Tracked exercises can be found on the main page.</small>
-  <a href="/">
-            <input class="btn btn-success" type="submit" value="Main Page">
-        </a>
-  </div>
-  </div>
+	<div class="col">
+		<small class="form-text text-muted">Choose the exercises to track: (press +)</small>
+		<ul class="list-group">
+			{% for ejercicio in exercises %}
+			<form action="/trackExercise" method="post">
+				<li class="list-group-item">
+					{{ ejercicio[0] }}
+					<input type="hidden" value={{ ejercicio[0] }} name="exercise">
+					<input class="btn btn-sm btn-primary" type="submit" value="+">
+				</li>
+			</form>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class="col">
+		<small class="form-text text-muted">You are tracking these exercises:</small>
+		<ul class="list-group">
+			{% for ejercicio in trackedExercises %}
+			<form action="/untrackExercise" method="post">
+				<li class="list-group-item"> {{ ejercicio[0] }}
+					<input type="hidden" value={{ ejercicio[0] }} name="exercise">
+					<input class="btn btn-primary" type="submit" value="-">
+				</li>
+			</form>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+		<p>Cant find the exercise you're looking for? </p>
+		<p>
+			<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+			Submit your own exercise
+			</button>
+		</p>
+		<div class="collapse" id="collapseExample">
+			<div class="card card-body">
+				<form action="/addExercise" method="post">
+					<div class="form-group">
+						<input type="text" class="form-control" name="userAddedExercise" id="userAddedExercise" placeholder="Name of the exercise">
+					</div>
+					<input class="btn btn-primary" type="submit" value="Submit exercise">
+				</form>
+				<small class="form-text text-muted">The exercise will be added to the exercise bank</small>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
+{% block footer %}
+<div class="row">
+	<div class="col">
+		<small class="form-text text-muted">Tracked exercises can be found on the main page.</small>
+		<a href="/">
+		<input class="btn btn-success" type="submit" value="Main Page">
+		</a>
+	</div>
+</div>
+{% endblock %}
+

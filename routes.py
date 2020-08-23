@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request, redirect, session, flash, g
+from flask import render_template, request, redirect, session, g
 import users_logic, exercises_logic
 
 @app.route("/")

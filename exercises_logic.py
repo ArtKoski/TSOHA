@@ -1,6 +1,5 @@
 from db import db
-from flask import redirect, render_template, session
-from datetime import date
+from flask import session
 
 def add_exercise(exercise):
     try:
