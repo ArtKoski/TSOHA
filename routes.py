@@ -2,25 +2,36 @@ from app import app
 from flask import render_template, request, redirect, session, g
 import users_logic, exercises_logic
 
+
+@app.route("/*")
+def reroute():
+    return redirect("/")
+
 @app.route("/")
 def index():
     if 'username' in session:
         username = session['username']
-        trackedExercises = exercises_logic.get_exerciseVariablesList()
-        if trackedExercises == None:
-            return redirect("/track") 
+        
+        try:
+            limit = request.args["limit"]
+        except:
+            limit = 30
+        
+        tracked_exercises = exercises_logic.get_exerciseVariables_list(limit)
+        
+        if tracked_exercises == None:
+            return redirect("/exercises") 
         else:
-            return render_template("main.html", name=username, trackedExercises=trackedExercises)
+            return render_template("main.html", name=username, trackedExercises=tracked_exercises)
     else:
             return render_template("main.html")
         
-
 @app.before_request
 def get_current_user():
     g.user = None
-    userId = session.get('userId')
-    if userId is not None:
-        g.user = userId
+    user_id = session.get('userId')
+    if user_id is not None:
+        g.user = user_id
 
 @app.route("/login", methods=["get", "post"])
 def login():
@@ -56,85 +67,79 @@ def logout():
     return redirect("/")
 
 
-#NÄÄ VARMAAN ERILLEEN SELVYYDEN VUOKSI
-@app.route("/addExercise", methods=["post"])
-def addExercise():
-    exercise = request.form["userAddedExercise"]
+#Add exercise to exercise bank
+@app.route("/exercises/add", methods=["post"])
+def add_exercise():
+    exercise = request.form["added_exercise"]
     exercises_logic.add_exercise(exercise)
-    return redirect("/track")
+    return redirect("/exercises")
     
     
-@app.route("/track", methods=["get"])
-def track():
-    listExercises = exercises_logic.get_list()
-    listTrackedExercises = exercises_logic.get_trackedList()
-    return render_template("workout.html", exercises=listExercises, trackedExercises=listTrackedExercises)
+@app.route("/exercises", methods=["get"])
+def exercises():
+    try:
+        search_term = request.args["search"]
+        exercises_list = exercises_logic.search_exercise_bank(search_term)
+    except:
+        exercises_list = exercises_logic.get_exercise_list()
+        
+    tracked_exercises_list = exercises_logic.get_tracked_list()    
+    return render_template("exercises.html", exercises=exercises_list, tracked_exercises=tracked_exercises_list)
 
-@app.route("/trackExercise", methods=["post"])
-def trackExercise():
+@app.route("/exercises/track", methods=["post"])
+def track_exercise():
+    ex_id = request.form["exercise_id"]
+    exercises_logic.track_exercise(ex_id)
+    return redirect("/exercises")
+   
+    
+@app.route("/exercises/untrack", methods=["post"])
+def untrack_exercise():
+    ex_id = request.form["exercise_id"]
+    exercises_logic.untrack_exercise(ex_id)
+    return redirect("/exercises")    
+
+@app.route("/workout/save", methods=["post"])
+def save_workout():
+    check_csrf(request.form["csrf_token"])
+    
     exercise = request.form["exercise"]
-    if exercises_logic.trackExercise(exercise):
-        return redirect("/track")
-    else:
-        return redirect("/track")   ##JAVASCRIPT?? JOKU POP-UP
+    sets = request.form["sets"]
+    reps = request.form["reps"]
+    weight = request.form["weight"]
+    info = request.form["info"]
     
-@app.route("/untrackExercise", methods=["post"])
-def untrack():
-    exercise = request.form["exercise"]
-    if exercises_logic.untrackExercise(exercise):
-        return redirect("/track")
-    else:
-        print("ei onnistunut")
-        return redirect("/track")    
-    
-@app.route("/saveWorkout", methods=["post"])
-def saveWorkout():
-    Exercise = request.form["Exercise"]
-    Sets = request.form["Sets"]
-    Reps = request.form["Reps"]
-    Weight = request.form["Weight"]
-    Info = request.form["Info"]
-    
-    if exercises_logic.saveWorkout(Exercise, Sets, Reps, Weight, Info):  #MISSING: ERROR HANDLING
-        return redirect("/") 
+    exercises_logic.save_workout(exercise, sets, reps, weight, info)
+    return redirect("/") 
         
 
-@app.route("/searchBank", methods=["get"])
-def searchExerciseBank():
-    searchTerm = request.args["search"]
-    listExercises = exercises_logic.searchBank(searchTerm)
-    listTrackedExercises = exercises_logic.get_trackedList()
-    return render_template("workout.html", exercises=listExercises, trackedExercises=listTrackedExercises)
         
 
-@app.route("/editWorkout", methods=["post"])
-def editWorkout():
-    ExerciseVariableId = request.form["exerciseVariableId"]
-    Sets = request.form["Sets"]
-    Reps = request.form["Reps"]
-    Weight = request.form["Weight"]
-    Info = request.form["Info"]
+@app.route("/workout/edit", methods=["post"])
+def edit_workout():
+    check_csrf(request.form["csrf_token"])
     
-    if exercises_logic.editWorkout(ExerciseVariableId, Sets, Reps, Weight, Info):  #MISSING: ERROR HANDLING
-        return redirect("/")
+    ex_var_id = request.form["exercise_variable_id"]
+    sets = request.form["sets"]
+    reps = request.form["reps"]
+    weight = request.form["weight"]
+    info = request.form["info"]
     
-@app.route("/deleteWorkout", methods=["post"])
-def deleteWorkout():
-    Id = request.form["exerciseVariableId"]
+    exercises_logic.edit_workout(ex_var_id, sets, reps, weight, info)
+    return redirect("/")
     
-    if(exercises_logic.deleteWorkout(Id)):
-        return redirect("/")
+@app.route("/workout/delete", methods=["post"])
+def delete_workout():
+    ex_var_id = request.form["exercise_variable_id"]
     
+    exercises_logic.delete_workout(ex_var_id)
+    return redirect("/")
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+def check_csrf(token):
+     if session["csrf_token"] != token:
+        abort(403)

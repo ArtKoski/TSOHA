@@ -1,23 +1,29 @@
 
 
 {% extends "layout.html" %}
+
 {% block header %}
 <h1>{% block title %}Register{% endblock %}</h1>
 {% endblock %}
+
 {% block content %}
 <form method="POST" action="/register">
-	<p>
-		<label for="username" class="sr-only">Username</label>
-		<input type="text" field="*{username}" id="username" name="username" class="form-control"
-			placeholder="Username" required autofocus/>
-	</p>
-	<p>
-		<label for="password" class="sr-only">Password</label>
-		<input type="password" id="password" name="password" field="*{password}" class="form-control"
-			placeholder="Password" required autofocus/>
-	</p>
-	<input class="btn btn-lg btn-block" type="submit" value="Create new account!"/>
+    <div class="container w-50">
+        <div class="form-group mx-sm-3 mb-2">
+            <p>
+                <label for="username" class="sr-only">Username</label>
+                <input type="text" field="*{username}" id="username" name="username" class="form-control"
+                       placeholder="Username" required autofocus/>
+            </p>
+            <p>
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" id="password" name="password" field="*{password}" class="form-control"
+                       placeholder="Password" required autofocus/>
+            </p>
+            <input class="btn btn-lg btn-primary btn-block" type="submit" value="Create new account!"/>
+            <a href="/">Go back</a>
+        </div>
+    </div>
 </form>
-<a href="/">Go back</a>
 {% endblock %}
 

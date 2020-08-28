@@ -1,0 +1,119 @@
+{% extends "layout.html" %}
+
+{% block header %}
+    <h1>{% block title %}Exercise selection{% endblock %}</h1>
+    <small class="form-text text-muted">Select the exercises you want to track from the exercise bank below.</small>
+{% endblock %}
+
+{% block content %}
+<div class="row mx-md-n5">
+    <div class="col px-md-5">
+        <p class="font-weight-bold">Exercise bank</p>
+
+    </div>
+    <div class="col px-md-5">
+        <p class="text-right font-weight-bold">Tracked exercises</p>
+    </div>
+</div>
+<div class="row mx-md-n5">
+    <div class="col px-md-5">
+        <small class="form-text text-muted">Choose the exercises to track (press +)</small>
+        <ul class="list-group">
+            {% if exercises %}
+            {% for ejercicio in exercises %}
+            <form action="/exercises/track" method="post">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ ejercicio[0] }}
+                    <input type="hidden" value={{ ejercicio[1] }} name="exercise_id">
+                    <input class="btn btn-sm btn-primary" type="submit" value="+">
+                </li>
+            </form>
+            {% endfor %}
+
+            {% else %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                No results
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="col px-md-5">
+        <small class="form-text text-right text-muted">You are tracking these exercises</small>
+        <ul class="list-group">
+            {% if tracked_exercises %}
+            {% for ejercicio in tracked_exercises %}
+            <form action="/exercises/untrack" method="post">
+                <li class="list-group-item d-flex justify-content-between align-items-center"> 
+                    <input type="hidden" value={{ ejercicio[1] }} name="exercise_id">
+                    <input class="btn btn-sm btn-primary" type="submit" value="-">
+                    {{ ejercicio[0] }}
+
+                </li>
+            </form>
+            {% endfor %}
+
+            {% else %}
+            <li class="list-group-item text-right align-items-right"> 
+                No tracked exercises
+            </li>
+            {% endif %}
+
+        </ul>
+    </div>
+</div>
+<div class="row mx-md-n5">
+    <div class="col px-md-5">
+        <p class="font-weight-light mt-2">Cant find the exercise you're looking for? </p>
+        <p>
+            <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Add/Search exercise
+            </button>
+        </p>
+
+        <div class="collapse" id="collapseExample">
+
+            <div class="card card-body">
+                <div class="container w-75">		
+                    <div class="row mx-md-n5">
+
+                        <small class="form-text text-muted">Search for an exercise..</small>	
+
+                        <form action="/exercises" method="get">            
+                            <div class="input-group mx-sm-3 mb-2">
+                                <input class="form-control" type="text" id="search" name="search" placeholder="e.g. Romanian Deadlift" aria-label="Search">
+                                <div class="input-group-append">
+                                    <button class="btn btn-sm btn-outline-success" type="submit">Search from exercise bank</button>
+                                </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row mx-md-n5">
+
+                    <form action="/exercises/add" method="post">
+
+                        <small class="form-text text-muted">..Or submit your own exercise (if the bank doesn't have it!)</small>
+                        <div class="input-group mx-sm-3 mb-2">
+                            <input type="text" class="form-control" name="added_exercise" id="added_exercise" placeholder="e.g. Single-arm Overhead Squat">
+                            <div class="input-group-append">
+                                <input class="btn btn-sm btn-primary" type="submit" value="Submit exercise">
+                            </div>
+                        </div>
+                    </form>
+                </div>            	
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<div class="row mx-md-n5">
+	<div class="col px-md-5">
+		<small class="form-text text-muted">Tracked exercises can be found on the main page.</small>
+		<a href="/">
+		<input class="btn btn-success" type="submit" value="Main Page">
+		</a>
+	</div>
+</div>
+{% endblock %}

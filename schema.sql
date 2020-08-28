@@ -12,8 +12,9 @@ CREATE TABLE exercises(
 
 CREATE TABLE trackedExercises(
     id SERIAL PRIMARY KEY,
-    exercise_id INTEGER REFERENCES exercises,
-    user_id INTEGER REFERENCES users,
+    exercise_id INTEGER REFERENCES exercises NOT NULL,
+    user_id INTEGER REFERENCES users NOT NULL,
+    UNIQUE (exercise_id, user_id),
     visible INTEGER
 );
 
@@ -22,7 +23,7 @@ CREATE TABLE exerciseVariables(
     trackedExercise_id INTEGER REFERENCES trackedExercises NOT NULL,
     setsTotal INTEGER NOT NULL,
     reps INTEGER NOT NULL,
-    weight INTEGER NOT NULL,
+    weight NUMERIC NOT NULL,
     info TEXT,
     time DATE DEFAULT CURRENT_DATE
 );
