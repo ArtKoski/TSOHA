@@ -10,6 +10,9 @@
             .container {
                 max-width: 800px;
             }
+            .navbar-logo {
+            width: 140px;
+            }
             h2 {color: blue;}
         </style>
     </head>
@@ -18,25 +21,19 @@
         <nav class="navbar navbar-expand-sm navbar-fixed-top bg-dark navbar-dark">
             <div class="container" style="background:transparent; padding-top: 0px; max-width:800px; justify-content:center">
                 <div class="row">
-                    <ul class="navbar-nav">
-                        <div class="width: 300px;">
-
+                    <ul class="nav navbar-nav pull-sm-left mr-3">
                             <li class="nav-item">
-                                <a class="nav-link" href="/exercises">Exercises</a>
+                                <a class="nav-link" href="/exercises" value="Exercises">Exercises</a>
                             </li>
-                        </div>
-                        <div class="col text-center">
+                            </ul>
+                    <ul class="nav navbar-nav navbar-logo mx-auto">
                             <li class="nav-item">
-                                <a class="navbar-brand" href="/">ProgressTracker</a>
+                                <a class="navbar-brand" href="/" value="ProgressTracker">ProgressTracker</a>
                             </li>
-                        </div>
-                        <div class="col text-center">
+                            </ul>
+                    <ul class="nav navbar-nav pull-sm-right ml-3">
                             <li class="nav-item">
-                                <a class="nav-link" href="/logout">Logout</a>
-                            </li>
-
-
-                        </div>
+                                <a class="nav-link" href="/logout" value="Logout">Logout</a>
                     </ul>
                 </div>
             </div> 
@@ -45,25 +42,19 @@
         <nav class="navbar navbar-expand-sm navbar-fixed-top bg-dark navbar-dark">
             <div class="container" style="background:transparent; padding-top: 0px; max-width:800px; justify-content:center">
                 <div class="row">
-                    <ul class="navbar-nav">
-
-                        <div class="width: 300px;">    
+                    <ul class="nav navbar-nav pull-sm-left mr-3">
                             <li class="nav-item">
                                 <a class="nav-link" href="/login">Login</a>
                             </li>
-                        </div>
-                        <div class="col text-center">
-
+                            </ul>
+                    <ul class="nav navbar-nav navbar-logo mx-auto">
                             <li class="nav-item">
                                 <a class="navbar-brand" href="/">ProgressTracker</a>
                             </li>
-                        </div>
-                        <div class="col text-center">
-
+                            </ul>
+                    <ul class="nav navbar-nav pull-sm-right ml-3">
                             <li class="nav-item">
                                 <a class="nav-link" href="/register">Register</a>
-                            </li>
-                        </div>    
                     </ul> 
 
                 </div>        
